@@ -5,11 +5,11 @@ export default function Navbar() {
           
           {/* LOGO */}
           <div className="relative leading-none">
-  <div className="text-lg font-semibold tracking-tight">
+  <div className="text-4xl font-semibold tracking-tight">
     Clearpath
   </div>
 
-  <div className="absolute left-[64px] top-5 text-[12px] font-medium text-blue-700 font-bold tracking-wider">
+  <div className="absolute left-[95px] top-[32px] text-[15px] font-bold text-blue-700 tracking-wide">
     Systems
   </div>
 </div>
