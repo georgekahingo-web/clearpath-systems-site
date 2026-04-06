@@ -13,8 +13,6 @@ export default function HomePage() {
       <Hero />
       <DemoShowcase />
       <Pricing />
-      <FAQ />
-      <FinalCTA />
       <Footer />
     </main>
   );
