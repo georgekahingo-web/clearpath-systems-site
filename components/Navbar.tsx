@@ -1,6 +1,6 @@
 export default function Navbar() {
     return (
-      <header className="border-b border-gray-200 px-6 py-4">
+      <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 px-6 py-4 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           
           {/* LOGO */}
