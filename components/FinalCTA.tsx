@@ -1,6 +1,6 @@
 export default function FinalCTA() {
   return (
-    <section className="bg-white px-6 py-28 md:py-36">
+    <section id="services" className="bg-white px-6 py-28 md:py-36 scroll-mt-24">
       <div className="mx-auto max-w-4xl text-center">
         <h2 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl md:leading-tight">
           Ready to upgrade your website?

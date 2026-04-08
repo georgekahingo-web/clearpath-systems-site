@@ -17,9 +17,16 @@ const CALENDLY = "https://calendly.com/george-clearpath/30min";
 
 const PROJECTS: Project[] = [
   {
-    id: "barber-featured",
+    id: "hvac-featured",
+    category: "hvac",
+    image: "/images/hvac-demo.png",
+    outcomeLabel: "HVAC → More service calls",
+    alt: "HVAC website demo",
+  },
+  {
+    id: "barber",
     category: "barber",
-    image: "/barber-demo.png",
+    image: "/images/barber-demo.png",
     outcomeLabel: "Barber Shop → More bookings",
     alt: "Barber shop website preview",
   },
@@ -29,13 +36,6 @@ const PROJECTS: Project[] = [
     image: "/medspa-demo.png",
     outcomeLabel: "Med Spa → Higher conversions",
     alt: "Med spa website preview",
-  },
-  {
-    id: "hvac",
-    category: "hvac",
-    image: "/images/hvac-demo.png",
-    outcomeLabel: "HVAC → More service calls",
-    alt: "HVAC website demo",
   },
 ];
 
@@ -107,7 +107,7 @@ export default function DemoShowcase() {
 
   return (
     <section
-      id="demo"
+      id="portfolio"
       className="scroll-mt-24 border-y border-slate-200/60 bg-slate-50 px-6 py-24 md:py-32"
     >
       <div className="mx-auto max-w-7xl">

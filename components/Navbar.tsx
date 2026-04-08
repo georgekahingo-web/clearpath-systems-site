@@ -16,13 +16,13 @@ export default function Navbar() {
   
           {/* NAV LINKS */}
           <nav className="hidden gap-8 text-sm text-gray-600 md:flex">
-            <a href="#">Services</a>
-            <a href="#">Portfolio</a>
-            <a href="#">Pricing</a>
+            <a href="#services">Services</a>
+            <a href="#portfolio">Portfolio</a>
+            <a href="#pricing">Pricing</a>
           </nav>
   
           {/* CTA BUTTON */}
-          <a className="rounded-md bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-500">
+          <a href="#pricing" className="rounded-md bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-500">
             Get started
           </a>
   

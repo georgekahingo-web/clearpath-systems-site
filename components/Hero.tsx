@@ -27,20 +27,31 @@ export default function Hero() {
             and clear CTAs—so traffic becomes calls and bookings, not bounces.
           </p>
 
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-10 flex flex-col items-start gap-3">
             <a
               href="https://calendly.com/george-clearpath/30min"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:scale-105 hover:bg-blue-500 hover:shadow-xl hover:shadow-blue-600/30"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white/80 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-white"
             >
-              Get Your Website
+              Book a Consultation
             </a>
 
-            <a
-              href="#demo"
-              className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white/70 px-7 py-3.5 text-sm font-semibold text-slate-800 shadow-sm backdrop-blur-sm transition hover:scale-105 hover:border-slate-300 hover:bg-white hover:shadow-md"
-            >
-              View Demo
-            </a>
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="#pricing"
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:scale-105 hover:bg-blue-500 hover:shadow-xl hover:shadow-blue-600/30"
+              >
+                Get Your Website
+              </a>
+
+              <a
+                href="#portfolio"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white/70 px-7 py-3.5 text-sm font-semibold text-slate-800 shadow-sm backdrop-blur-sm transition hover:scale-105 hover:border-slate-300 hover:bg-white hover:shadow-md"
+              >
+                View Demo
+              </a>
+            </div>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
@@ -52,26 +63,37 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="relative mx-auto w-full max-w-xl lg:max-w-2xl lg:justify-self-end">
-          <div
-            className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xl shadow-slate-900/10 ring-1 ring-slate-200/60 transition duration-300 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-slate-900/15"
-          >
-            <div className="relative aspect-video w-full max-h-[400px] min-h-[180px]">
+        <div className="relative mx-auto flex w-full max-w-xl justify-end lg:justify-self-end">
+          <div className="relative h-[320px] w-full max-w-xl sm:h-[360px] md:h-[400px]">
+            <div className="relative z-30 ml-auto h-[58%] w-[76%] overflow-hidden rounded-xl border border-white/10 shadow-xl transition-all duration-300">
               <Image
-                src="/barber-demo.png"
-                alt="Website preview: modern local business site with booking focus"
+                src="/barber-hero.png"
+                alt="Barber demo hero section preview"
                 fill
-                className="object-cover object-top transition duration-700 ease-out group-hover:brightness-[0.98]"
-                sizes="(max-width: 1024px) 100vw, 672px"
+                className="object-cover object-top"
+                sizes="(max-width: 1024px) 100vw, 420px"
                 priority
               />
-              <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/35 via-transparent to-slate-900/5"
-                aria-hidden
+            </div>
+
+            <div className="absolute bottom-3 left-0 z-20 hidden h-[36%] w-[44%] -translate-y-2 overflow-hidden rounded-xl border border-white/10 shadow-xl transition-all duration-300 md:block">
+              <Image
+                src="/barber-reviews.png"
+                alt="Barber demo reviews section preview"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1280px) 28vw, 220px"
               />
             </div>
-            <div className="absolute bottom-4 left-4 bg-white/85 px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm backdrop-blur-sm rounded-md">
-              Barber Shop Website
+
+            <div className="absolute bottom-0 right-0 z-10 hidden h-[42%] w-[52%] overflow-hidden rounded-xl border border-white/10 shadow-xl transition-all duration-300 md:block">
+              <Image
+                src="/images/barber-services.png"
+                alt="Barber demo booking section preview"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1280px) 32vw, 260px"
+              />
             </div>
           </div>
         </div>
