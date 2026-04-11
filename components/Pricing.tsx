@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 const CORE_FEATURES = [
   "Conversion-optimized design",
   "Mobile-first experience",
@@ -28,37 +26,28 @@ const SCALE_EXTRAS = [
 const checkoutButtonClass =
   "mt-10 block w-full rounded-xl bg-blue-600 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:scale-[1.02] hover:bg-blue-500 hover:shadow-xl hover:shadow-blue-600/35 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100";
 
-type Plan = "starter" | "growth";
-
 export default function Pricing() {
-  const [loadingPlan, setLoadingPlan] = useState<Plan | null>(null);
-
-  async function handleCheckout(plan: Plan) {
+  const handleCheckout = async (plan: "starter" | "growth") => {
     try {
-      setLoadingPlan(plan);
       const res = await fetch("/api/checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ plan }),
       });
-      const data: { url?: string; error?: string } = await res.json();
-      if (!res.ok) {
+
+      const data = (await res.json()) as { url?: string; error?: string };
+
+      if (!res.ok || !data.url) {
         throw new Error(data.error || "Checkout failed");
       }
-      if (!data.url) {
-        throw new Error("No checkout URL returned");
-      }
+
       window.location.href = data.url;
     } catch (err) {
-      console.error(err);
-      setLoadingPlan(null);
-      window.alert(
-        err instanceof Error ? err.message : "Something went wrong. Please try again."
-      );
+      console.error("Checkout error:", err);
     }
-  }
-
-  const busy = loadingPlan !== null;
+  };
 
   return (
     <section id="pricing" className="bg-white px-6 py-24 md:py-32 scroll-mt-24">
@@ -104,11 +93,10 @@ export default function Pricing() {
 
             <button
               type="button"
-              disabled={busy}
               onClick={() => handleCheckout("starter")}
               className={checkoutButtonClass}
             >
-              {loadingPlan === "starter" ? "Redirecting..." : "Get My Website"}
+              Get My Website
             </button>
           </div>
 
@@ -157,11 +145,10 @@ export default function Pricing() {
 
             <button
               type="button"
-              disabled={busy}
               onClick={() => handleCheckout("growth")}
               className={checkoutButtonClass}
             >
-              {loadingPlan === "growth" ? "Redirecting..." : "Get More Leads"}
+              Get More Leads
             </button>
           </div>
 

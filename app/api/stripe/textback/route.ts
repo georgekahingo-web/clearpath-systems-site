@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       success_url: `${origin}/success?product=textback`,
-      cancel_url: `${origin}/pricing`,
+      cancel_url: `${origin}/#text-back`,
     });
 
     if (!session.url) {

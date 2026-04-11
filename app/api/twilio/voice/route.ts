@@ -5,34 +5,50 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
-  const from = formData.get("From"); // caller number
-  const callStatus = formData.get("CallStatus");
+  const callStatus = formData.get("CallStatus")?.toString();
 
-  console.log("Incoming call from:", from);
-  console.log("Call status:", callStatus);
+  console.log("📞 Call status:", callStatus);
 
-  if (callStatus === "no-answer") {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const twilioFrom = process.env.TWILIO_PHONE_NUMBER;
-    if (
-      accountSid &&
-      authToken &&
-      twilioFrom &&
-      typeof from === "string" &&
-      from.length > 0
-    ) {
-      const client = twilio(accountSid, authToken);
-      await client.messages.create({
-        to: from,
-        from: twilioFrom,
-        body: "Hey! Sorry we missed your call — how can we help?",
-      });
+  if (callStatus === "completed") {
+    const from = formData.get("From")?.toString();
+    const to = process.env.TWILIO_PHONE_NUMBER;
+
+    if (from && to) {
+      try {
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
+        if (!accountSid || !authToken) {
+          console.error("❌ SMS error: Twilio credentials not configured");
+        } else {
+          const client = twilio(accountSid, authToken);
+
+          await client.messages.create({
+            body: "Hey! Sorry we missed your call — how can we help?",
+            from: to,
+            to: from,
+          });
+
+          console.log("✅ Auto text sent");
+        }
+      } catch (err) {
+        console.error("❌ SMS error:", err);
+      }
     }
   }
 
-  return new NextResponse(`<Response></Response>`, {
-    status: 200,
+  const twiml = new twilio.twiml.VoiceResponse();
+
+  const forwardTo = process.env.FORWARD_TO_NUMBER;
+  if (forwardTo) {
+    twiml.dial(
+      {
+        timeout: 15, // ring for 15 seconds
+      },
+      forwardTo
+    );
+  }
+
+  return new NextResponse(twiml.toString(), {
     headers: {
       "Content-Type": "text/xml",
     },

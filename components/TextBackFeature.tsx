@@ -1,30 +1,23 @@
 "use client";
 
-import { useRef } from "react";
-
 export default function TextBackFeature() {
-  const textBackSubmitting = useRef(false);
-
-  async function handleTextBackCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault();
-    if (textBackSubmitting.current) return;
-    textBackSubmitting.current = true;
+  const handleTextBackCheckout = async () => {
     try {
-      const res = await fetch("/api/stripe/textback", { method: "POST" });
-      const data: { url?: string; error?: string } = await res.json();
-      if (!res.ok) {
+      const res = await fetch("/api/stripe/textback", {
+        method: "POST",
+      });
+
+      const data = (await res.json()) as { url?: string; error?: string };
+
+      if (!res.ok || !data.url) {
         throw new Error(data.error || "Checkout failed");
       }
-      if (!data.url) {
-        throw new Error("No checkout URL returned");
-      }
+
       window.location.href = data.url;
     } catch (err) {
       console.error("Text-Back checkout error:", err);
-    } finally {
-      textBackSubmitting.current = false;
     }
-  }
+  };
 
   return (
     <section
@@ -72,13 +65,12 @@ export default function TextBackFeature() {
               website.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <a
-                href="#"
+              <button
                 onClick={handleTextBackCheckout}
                 className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-500"
               >
                 Get Text-Back
-              </a>
+              </button>
               <a
                 href="#pricing"
                 className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
