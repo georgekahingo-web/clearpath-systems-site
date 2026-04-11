@@ -4,56 +4,23 @@ import twilio from "twilio";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const formData = await req.formData();
-  const callStatus = formData.get("CallStatus")?.toString();
-
-  console.log("📞 Call status:", callStatus);
-
-  if (callStatus === "completed") {
-    const from = formData.get("From")?.toString();
-    const to = process.env.TWILIO_PHONE_NUMBER;
-
-    if (from && to) {
-      try {
-        const accountSid = process.env.TWILIO_ACCOUNT_SID;
-        const authToken = process.env.TWILIO_AUTH_TOKEN;
-        if (!accountSid || !authToken) {
-          console.error("❌ SMS error: Twilio credentials not configured");
-        } else {
-          const client = twilio(accountSid, authToken);
-
-          await client.messages.create({
-            body: "Hey! Sorry we missed your call — how can we help?",
-            from: to,
-            to: from,
-          });
-
-          console.log("✅ Auto text sent");
-        }
-      } catch (err) {
-        console.error("❌ SMS error:", err);
-      }
-    }
-  }
-
   const twiml = new twilio.twiml.VoiceResponse();
 
   const forwardTo = process.env.FORWARD_TO_NUMBER;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   console.log("📞 Voice webhook hit");
-  console.log("📞 Forwarding to:", process.env.FORWARD_TO_NUMBER);
+  console.log("📞 Forwarding to:", forwardTo);
 
-  const origin = req.headers.get("origin") || "https://clearpathsystems.dev";
-
-  if (forwardTo) {
+  if (forwardTo && appUrl) {
     twiml.dial(
       {
         timeout: 20,
         answerOnBridge: true,
-        action: `${origin}/api/twilio/status`,
+        action: `${appUrl}/api/twilio/status`,
         method: "POST",
       },
-      process.env.FORWARD_TO_NUMBER
+      forwardTo
     );
   } else {
     twiml.say("No forwarding number configured.");
