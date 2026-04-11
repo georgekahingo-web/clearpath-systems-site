@@ -35,5 +35,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ success: true });
+  const twiml = new twilio.twiml.VoiceResponse();
+
+  return new NextResponse(twiml.toString(), {
+    headers: {
+      "Content-Type": "text/xml",
+    },
+  });
 }

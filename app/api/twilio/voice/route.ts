@@ -43,15 +43,17 @@ export async function POST(req: NextRequest) {
   console.log("📞 Voice webhook hit");
   console.log("📞 Forwarding to:", process.env.FORWARD_TO_NUMBER);
 
+  const origin = req.headers.get("origin") || "https://clearpathsystems.dev";
+
   if (forwardTo) {
     twiml.dial(
       {
         timeout: 20,
         answerOnBridge: true,
-        action: "/api/twilio/status",
+        action: `${origin}/api/twilio/status`,
         method: "POST",
       },
-      forwardTo
+      process.env.FORWARD_TO_NUMBER
     );
   } else {
     twiml.say("No forwarding number configured.");
