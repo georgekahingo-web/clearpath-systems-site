@@ -39,13 +39,22 @@ export async function POST(req: NextRequest) {
   const twiml = new twilio.twiml.VoiceResponse();
 
   const forwardTo = process.env.FORWARD_TO_NUMBER;
+
+  console.log("📞 Voice webhook hit");
+  console.log("📞 Forwarding to:", process.env.FORWARD_TO_NUMBER);
+
   if (forwardTo) {
     twiml.dial(
       {
-        timeout: 15, // ring for 15 seconds
+        timeout: 20,
+        answerOnBridge: true,
+        action: "/api/twilio/status",
+        method: "POST",
       },
       forwardTo
     );
+  } else {
+    twiml.say("No forwarding number configured.");
   }
 
   return new NextResponse(twiml.toString(), {
