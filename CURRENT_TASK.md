@@ -1,21 +1,33 @@
-# CURRENT TASK
+MANDATORY FIRST STEP:
+Read Project Context and Current Task before making changes.
 
-Phase 1: Visual Identity & Design Upgrade
+---
 
-Goals:
-- Make the site feel more premium, modern, and “alive”
-- Reduce flat white space
-- Add subtle gradients and background depth
-- Introduce visual elements (shapes, blur, color)
-- Improve overall visual hierarchy
+CURRENT TASK: Implement Twilio Voice Webhook for Missed Call Detection
 
-Focus Areas:
-- Hero section visual upgrade
-- Section background contrast
-- Typography polish
-- Add subtle design elements without clutter
+Objective:
+Detect when a forwarded call is not answered and trigger an automatic SMS response to the caller.
 
-Constraints:
-- Keep design clean and minimal
-- Maintain responsiveness
-- Do not break layout or functionality
+---
+
+GOALS:
+
+1. Create Twilio voice webhook endpoint
+2. Read incoming call data
+3. Detect missed calls (no-answer)
+4. Send SMS to caller
+
+---
+
+CONSTRAINTS:
+
+* Do NOT modify Stripe logic
+* Do NOT modify existing Twilio provisioning logic
+* Only add new Twilio route
+* Keep implementation minimal and safe
+
+---
+
+EXPECTED OUTCOME:
+
+When a call is missed, the system automatically sends an SMS to the caller

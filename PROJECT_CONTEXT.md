@@ -1,31 +1,38 @@
-# PROJECT CONTEXT
+PROJECT CONTEXT — CLEARPATH SYSTEMS
 
-Project: Clearpath Systems (Agency Website)
+Clearpath Systems already has an existing frontend and backend that should be preserved.
 
-Purpose:
-A high-converting agency website designed to attract local business clients (HVAC, barbers, med spas, etc.) and convert them into paying customers.
+Important implementation rule:
+DO NOT redesign, restructure, or heavily refactor the site unless explicitly requested.
 
-Core Offering:
-We build conversion-focused websites that generate leads, calls, and bookings for service-based businesses.
+The site owner is already happy with the current UI, layout, and overall branding. Future changes should be surgical and additive only.
 
-Tech Stack:
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- Vercel deployment
+Current implementation priority:
+Add the new “Text-Back” offer into the existing Clearpath Systems website without disrupting the current design system or breaking existing functionality.
 
-Design Direction:
-- Modern, premium, minimal with depth
-- Clean layouts with subtle gradients and visual energy
-- High-end SaaS + agency hybrid feel
+Allowed changes:
 
-Key Sections:
-- Hero (strong positioning + CTA)
-- Portfolio / Demo section
-- Pricing
-- Footer
-- Future: testimonials, FAQ, Stripe checkout
+* Add “Text-Back” to the navbar
+* Add a new Text-Back section to the homepage
+* Add supporting pricing/package language that positions Text-Back as:
 
-Primary Goal:
-Convert visitors into paying clients (not just showcase work).
+  1. a standalone service
+  2. included in higher-tier website packages
+* Reuse existing components, spacing, colors, typography, and section patterns whenever possible
+* Make additions feel native to the current site
+
+Not allowed unless explicitly requested:
+
+* Full homepage redesign
+* Replacing existing UI patterns
+* Rebuilding the component structure
+* Large visual changes
+* Major refactors to working frontend code
+* Changes that alter the current branding direction
+* Changes that risk breaking existing flows, Stripe, onboarding, or backend integrations
+
+Design instruction:
+Any new Text-Back section should visually match the current site and feel like a natural extension of the current UI. The design should be inspired by the existing Clearpath Systems styling and may use a layout similar to the provided screenshot: phone mockup/visual on one side, explanatory text and benefit bullets on the other.
+
+Development philosophy:
+Preserve the existing site first. Enhance carefully. Make minimal, explicit changes only.

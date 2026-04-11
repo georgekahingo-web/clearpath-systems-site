@@ -1,29 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const PLAN_CONFIG = {
-  starter: {
-    unitAmountCents: 499 * 100,
-    productName: "Starter Website Deposit",
-  },
-  growth: {
-    unitAmountCents: 999 * 100,
-    productName: "Growth Website Deposit",
-  },
+const DEPOSIT_PRICE_IDS = {
+  starter:
+    process.env.NODE_ENV === "production"
+      ? process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID_LIVE!
+      : process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID_TEST!,
+  growth:
+    process.env.NODE_ENV === "production"
+      ? process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID_LIVE!
+      : process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID_TEST!,
 } as const;
 
-type PlanKey = keyof typeof PLAN_CONFIG;
+type PlanKey = keyof typeof DEPOSIT_PRICE_IDS;
 
 export async function POST(request: NextRequest) {
   console.log("CHECKOUT: request started");
 
-  const secret = process.env.STRIPE_SECRET_KEY;
-  if (!secret) {
-    return NextResponse.json(
-      { error: "Payment provider is not configured." },
-      { status: 500 }
-    );
+  const stripeKey =
+    process.env.NODE_ENV === "production"
+      ? process.env.STRIPE_SECRET_KEY_LIVE
+      : process.env.STRIPE_SECRET_KEY_TEST;
+
+  console.log(
+    "STRIPE KEY MODE:",
+    process.env.NODE_ENV === "production" ? "LIVE" : "TEST"
+  );
+
+  if (!stripeKey) {
+    throw new Error("Payment provider is not configured.");
   }
+
+  const stripe = new Stripe(stripeKey, {
+    apiVersion: "2024-04-10",
+  });
 
   let body: unknown;
   try {
@@ -52,16 +62,26 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const config = PLAN_CONFIG[plan as PlanKey];
-  const amount = config.unitAmountCents / 100;
+  const depositPriceId = DEPOSIT_PRICE_IDS[plan as PlanKey];
+  if (!depositPriceId) {
+    console.error("❌ Missing price ID for plan:", plan);
+    return NextResponse.json(
+      { error: "Deposit pricing is not configured correctly." },
+      { status: 500 }
+    );
+  }
 
   console.log("CHECKOUT: selected plan:", plan);
-  console.log("CHECKOUT: calculated amount (USD):", amount);
+  console.log("CHECKOUT: deposit price ID:", depositPriceId);
+
+  const origin =
+    request.headers.get("origin") || "http://localhost:3000";
 
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2023-10-16",
-    });
+    console.log("ENV:", process.env.NODE_ENV);
+    console.log("STARTER TEST PRICE:", process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID_TEST);
+    console.log("GROWTH TEST PRICE:", process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID_TEST);
+    console.log("SELECTED PRICE ID:", depositPriceId);
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -73,20 +93,14 @@ export async function POST(request: NextRequest) {
       line_items: [
         {
           quantity: 1,
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: config.productName,
-            },
-            unit_amount: config.unitAmountCents,
-          },
+          price: depositPriceId,
         },
       ],
       metadata: {
         plan,
       },
-      success_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000/",
+      success_url: `${origin}/success?plan=${plan}`,
+      cancel_url: `${origin}/`,
     });
 
     if (!session.url) {
@@ -100,16 +114,19 @@ export async function POST(request: NextRequest) {
     console.log("NEW CHECKOUT SESSION CREATED:");
     console.log({
       plan,
-      amount,
+      depositPriceId,
       sessionId: session.id,
       url: session.url,
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error) {
-    console.error("STRIPE CHECKOUT ERROR:", error);
+  } catch (error: any) {
+    console.error("🔥 FULL STRIPE ERROR:", error);
+    console.error("🔥 MESSAGE:", error?.message);
+    console.error("🔥 TYPE:", error?.type);
+
     return NextResponse.json(
-      { error: "Checkout session failed" },
+      { error: error.message || "Stripe session failed" },
       { status: 500 }
     );
   }

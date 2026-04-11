@@ -1,7 +1,22 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+
+const FLOW_TEXTBACK = "textback";
+
+const ONBOARDING_HEADLINE = {
+  website: "Let's get your website started",
+  textback: "Activate Your Customer Response System",
+} as const;
+
+const ONBOARDING_DESCRIPTION = {
+  website:
+    "Tell us about your business so we can begin building immediately.",
+  textback:
+    "We'll use this information to configure your missed-call text and email automation.",
+} as const;
 
 const inputClass =
   "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20";
@@ -11,6 +26,33 @@ const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 type BusinessType = "" | "HVAC" | "Barber" | "Med Spa" | "Other";
 
 export default function OnboardingPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white px-6 py-16 text-slate-900 md:py-24">
+          <div className="mx-auto max-w-xl text-center text-sm text-slate-500">
+            Loading…
+          </div>
+        </main>
+      }
+    >
+      <OnboardingPageContent />
+    </Suspense>
+  );
+}
+
+function OnboardingPageContent() {
+  const searchParams = useSearchParams();
+  const flow = searchParams.get("flow");
+  const isTextBackFlow = flow === FLOW_TEXTBACK;
+
+  const headline = isTextBackFlow
+    ? ONBOARDING_HEADLINE.textback
+    : ONBOARDING_HEADLINE.website;
+  const description = isTextBackFlow
+    ? ONBOARDING_DESCRIPTION.textback
+    : ONBOARDING_DESCRIPTION.website;
+
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -114,10 +156,10 @@ export default function OnboardingPage() {
       <div className="mx-auto max-w-xl">
         <header className="mb-10 text-center md:mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-            Let&apos;s get your website started
+            {headline}
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-slate-600">
-            Tell us about your business so we can begin building immediately.
+            {description}
           </p>
         </header>
 

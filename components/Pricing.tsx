@@ -13,9 +13,16 @@ const CORE_FEATURES = [
 ] as const;
 
 const GROWTH_EXTRAS = [
+  "Text-Back feature included (never miss a lead)",
   "Priority delivery",
   "Custom branding",
   "Conversion optimization tweaks",
+] as const;
+
+const SCALE_EXTRAS = [
+  "Text-Back + CRM integration",
+  "Advanced automation workflows",
+  "Dedicated strategy support",
 ] as const;
 
 const checkoutButtonClass =
@@ -66,20 +73,22 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch lg:gap-6">
+        <div className="grid gap-8 lg:grid-cols-3 lg:items-stretch lg:gap-6">
           {/* Starter */}
           <div className="flex flex-col rounded-xl border border-slate-200 bg-slate-50/40 p-8 shadow-lg ring-1 ring-slate-200/60 md:p-10">
             <div>
               <h3 className="text-xl font-semibold text-slate-900">Starter</h3>
               <p className="mt-1 text-sm font-medium text-blue-700">
-                Lead-Generating Website System
+                For businesses that need a professional online presence.
               </p>
               <p className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-bold tracking-tight text-slate-900">
                   $999
                 </span>
               </p>
-              <p className="mt-2 text-sm text-slate-500">One-time · core features</p>
+              <p className="mt-2 text-sm text-slate-500">
+                Does not include Text-Back lead recovery
+              </p>
             </div>
 
             <ul className="mt-8 flex-1 space-y-3 text-sm leading-relaxed text-slate-600">
@@ -112,7 +121,7 @@ export default function Pricing() {
             <div className="pt-2">
               <h3 className="text-xl font-semibold text-slate-900">Growth</h3>
               <p className="mt-1 text-sm font-medium text-blue-700">
-                Lead-Generating Website System
+                For businesses that want more leads, faster responses, and more booked jobs.
               </p>
               <p className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-bold tracking-tight text-slate-900">
@@ -120,7 +129,7 @@ export default function Pricing() {
                 </span>
               </p>
               <p className="mt-2 text-sm text-slate-500">
-                One-time · everything in Starter, plus:
+                Everything in Starter, plus built-in lead recovery
               </p>
             </div>
 
@@ -152,8 +161,55 @@ export default function Pricing() {
               onClick={() => handleCheckout("growth")}
               className={checkoutButtonClass}
             >
-              {loadingPlan === "growth" ? "Redirecting..." : "Get My Website"}
+              {loadingPlan === "growth" ? "Redirecting..." : "Get More Leads"}
             </button>
+          </div>
+
+          {/* Scale */}
+          <div className="flex flex-col rounded-xl border border-slate-200 bg-slate-50/40 p-8 shadow-lg ring-1 ring-slate-200/60 md:p-10">
+            <div>
+              <h3 className="text-xl font-semibold text-slate-900">Scale</h3>
+              <p className="mt-1 text-sm font-medium text-blue-700">
+                For businesses ready to scale aggressively and automate their growth.
+              </p>
+              <p className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold tracking-tight text-slate-900">
+                  $2,999+
+                </span>
+              </p>
+              <p className="mt-2 text-sm text-slate-500">
+                Everything in Growth, plus advanced automation
+              </p>
+            </div>
+
+            <ul className="mt-6 space-y-3 text-sm leading-relaxed text-slate-600">
+              {CORE_FEATURES.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span className="mt-0.5 shrink-0 text-blue-600" aria-hidden>
+                    ✓
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            <ul className="mt-4 flex-1 space-y-3 border-t border-slate-200/80 pt-4 text-sm font-medium text-slate-800">
+              {SCALE_EXTRAS.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span className="mt-0.5 shrink-0 text-blue-600" aria-hidden>
+                    ✓
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href="https://calendly.com/george-clearpath/30min"
+              className="mt-10 block w-full rounded-xl bg-blue-600 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:scale-[1.02] hover:bg-blue-500 hover:shadow-xl hover:shadow-blue-600/35"
+            >
+              Book Scale Plan
+            </a>
           </div>
         </div>
 

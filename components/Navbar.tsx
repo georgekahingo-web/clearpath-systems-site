@@ -17,6 +17,7 @@ export default function Navbar() {
           {/* NAV LINKS */}
           <nav className="hidden gap-8 text-sm text-gray-600 md:flex">
             <a href="#services">Services</a>
+            <a href="#text-back">Text-Back</a>
             <a href="#portfolio">Portfolio</a>
             <a href="#pricing">Pricing</a>
           </nav>
