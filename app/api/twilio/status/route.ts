@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -13,6 +16,8 @@ export async function POST(req: NextRequest) {
 
   // Only send SMS if call was NOT answered
   if (dialCallStatus && dialCallStatus !== "completed") {
+    const caller = formData.get("From")?.toString();
+
     try {
       const accountSid = process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -32,6 +37,25 @@ export async function POST(req: NextRequest) {
       }
     } catch (err) {
       console.error("❌ SMS error:", err);
+    }
+
+    try {
+      if (process.env.BUSINESS_EMAIL && caller) {
+        await resend.emails.send({
+          from: "Clearpath <notifications@yourdomain.com>",
+          to: process.env.BUSINESS_EMAIL,
+          subject: "Missed Call Alert",
+          html: `
+        <h2>Missed Call</h2>
+        <p>You missed a call from:</p>
+        <p><strong>${caller}</strong></p>
+      `,
+        });
+
+        console.log("📧 Missed call email sent");
+      }
+    } catch (err) {
+      console.error("❌ Email error:", err);
     }
   }
 
