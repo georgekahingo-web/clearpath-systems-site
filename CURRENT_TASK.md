@@ -1,36 +1,37 @@
 CURRENT TASK:
 
-You are enhancing the Twilio missed-call system to send an EMAIL notification when a call is missed.
+You are implementing Supabase client integration for a Next.js app.
 
-Scope:
-Modify ONLY:
-app/api/twilio/status/route.ts
+Scope is STRICTLY LIMITED to creating and testing database connection utilities.
 
 DO NOT modify:
-- voice route
-- inbound-sms route
-- any other files
+- /api/twilio/voice/route.ts
+- /api/twilio/status/route.ts
+- /api/twilio/inbound-sms/route.ts
+- any existing API logic
+
+YOU MAY ONLY:
+1. Create:
+   - src/lib/supabase.ts
+   - src/lib/getClient.ts
+
+2. Add temporary test logic inside ONE existing route (voice route) ONLY for logging
 
 OBJECTIVE:
-When a call is missed:
-1. Send SMS to customer (already exists)
-2. ALSO send EMAIL to business owner with caller number
+- Connect app to Supabase
+- Create helper to fetch client by twilio_number
+- Verify connection by logging client data
 
 REQUIREMENTS:
-- Use Resend for email
-- Add environment variables:
-  RESEND_API_KEY
-  BUSINESS_EMAIL
-- Email subject:
-  "Missed Call Alert"
-- Email content must include:
-  - Caller phone number
-  - Simple message: "You missed a call from [number]"
-- Wrap email logic in try/catch
-- DO NOT break Twilio response
-- Always return valid TwiML
+- Use @supabase/supabase-js
+- Use environment variables:
+  NEXT_PUBLIC_SUPABASE_URL
+  NEXT_PUBLIC_SUPABASE_ANON_KEY
+- Handle errors safely
+- Do NOT break existing Twilio functionality
 
 SUCCESS CRITERIA:
-- Missed call triggers BOTH SMS + EMAIL
-- No Twilio errors
-- Clean logs
+- Supabase client initializes correctly
+- getClientByTwilioNumber returns correct data
+- Logs show client data when Twilio number is called
+- No crashes

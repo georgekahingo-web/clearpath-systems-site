@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
+import { getClientByTwilioNumber } from "@/lib/getClient";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const formData = await req.formData();
+  const to = formData.get("To")?.toString();
+
+  if (to) {
+    const client = await getClientByTwilioNumber(to);
+    console.log("🧪 TEST CLIENT:", client);
+  }
+
   const twiml = new twilio.twiml.VoiceResponse();
 
   const forwardTo = process.env.FORWARD_TO_NUMBER;
