@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     try {
       if (process.env.BUSINESS_EMAIL && caller) {
         await resend.emails.send({
-          from: "Clearpath <notifications@yourdomain.com>",
+          from: "onboarding@resend.dev",
           to: process.env.BUSINESS_EMAIL,
           subject: "Missed Call Alert",
           html: `
