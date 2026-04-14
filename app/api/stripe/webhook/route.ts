@@ -7,10 +7,7 @@ export const dynamic = "force-dynamic";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 function getStripe(): Stripe {
-  const stripeKey =
-    process.env.NODE_ENV === "production"
-      ? process.env.STRIPE_SECRET_KEY_LIVE
-      : process.env.STRIPE_SECRET_KEY_TEST;
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
 
   if (!stripeKey) {
     throw new Error("Payment provider is not configured.");
@@ -28,7 +25,7 @@ export async function POST(request: NextRequest) {
   );
   console.log("🔔 Stripe webhook triggered");
   if (!process.env.STRIPE_SECRET_KEY) {
-    console.error("❌ STRIPE_SECRET_KEY is missing");
+    console.error("❌ Missing STRIPE_SECRET_KEY");
   }
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;

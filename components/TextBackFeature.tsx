@@ -2,6 +2,9 @@
 
 export default function TextBackFeature() {
   const handleTextBackCheckout = async () => {
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      console.error("❌ Missing NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
+    }
     try {
       const res = await fetch("/api/stripe/textback", {
         method: "POST",

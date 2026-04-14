@@ -8,26 +8,22 @@ export async function POST(req: NextRequest) {
   );
   console.log("📦 Creating Stripe checkout session");
   if (!process.env.STRIPE_SECRET_KEY) {
-    console.error("❌ STRIPE_SECRET_KEY is missing");
+    console.error("❌ Missing STRIPE_SECRET_KEY");
   }
-
-  const stripeKey =
-    process.env.NODE_ENV === "production"
-      ? process.env.STRIPE_SECRET_KEY_LIVE
-      : process.env.STRIPE_SECRET_KEY_TEST;
+  if (!process.env.STRIPE_TEXTBACK_PRICE_ID) {
+    console.error("❌ Missing STRIPE_TEXTBACK_PRICE_ID");
+  }
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
 
   if (!stripeKey) {
     throw new Error("Payment provider is not configured.");
   }
 
-  const stripe = new Stripe(stripeKey, {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2024-04-10",
   });
 
-  const priceId =
-    process.env.NODE_ENV === "production"
-      ? process.env.STRIPE_TEXTBACK_PRICE_ID_LIVE!
-      : process.env.STRIPE_TEXTBACK_PRICE_ID_TEST!;
+  const priceId = process.env.STRIPE_TEXTBACK_PRICE_ID;
   console.log("TEXTBACK ENV:", process.env.NODE_ENV);
   console.log("TEXTBACK PRICE ID:", priceId);
   console.log("STRIPE KEY EXISTS:", !!stripeKey);

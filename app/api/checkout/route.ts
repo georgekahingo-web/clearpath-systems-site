@@ -2,30 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const DEPOSIT_PRICE_IDS = {
-  starter:
-    process.env.NODE_ENV === "production"
-      ? process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID_LIVE!
-      : process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID_TEST!,
-  growth:
-    process.env.NODE_ENV === "production"
-      ? process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID_LIVE!
-      : process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID_TEST!,
+  starter: process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID!,
+  growth: process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID!,
 } as const;
 
 type PlanKey = keyof typeof DEPOSIT_PRICE_IDS;
 
 export async function POST(request: NextRequest) {
   console.log("CHECKOUT: request started");
-
-  const stripeKey =
-    process.env.NODE_ENV === "production"
-      ? process.env.STRIPE_SECRET_KEY_LIVE
-      : process.env.STRIPE_SECRET_KEY_TEST;
-
   console.log(
-    "STRIPE KEY MODE:",
-    process.env.NODE_ENV === "production" ? "LIVE" : "TEST"
+    "🚀 Stripe mode:",
+    process.env.STRIPE_SECRET_KEY?.includes("test") ? "TEST" : "LIVE"
   );
+
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("❌ Missing STRIPE_SECRET_KEY");
+  }
 
   if (!stripeKey) {
     throw new Error("Payment provider is not configured.");
@@ -79,8 +73,8 @@ export async function POST(request: NextRequest) {
 
   try {
     console.log("ENV:", process.env.NODE_ENV);
-    console.log("STARTER TEST PRICE:", process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID_TEST);
-    console.log("GROWTH TEST PRICE:", process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID_TEST);
+    console.log("STARTER PRICE:", process.env.STRIPE_STARTER_DEPOSIT_PRICE_ID);
+    console.log("GROWTH PRICE:", process.env.STRIPE_GROWTH_DEPOSIT_PRICE_ID);
     console.log("SELECTED PRICE ID:", depositPriceId);
 
     const session = await stripe.checkout.sessions.create({
