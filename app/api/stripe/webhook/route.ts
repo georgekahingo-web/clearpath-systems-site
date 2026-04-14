@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { NextRequest } from "next/server";
 import Stripe from "stripe";
 import { provisionPhoneNumber } from "@/lib/twilio";
 import { Resend } from "resend";
@@ -6,58 +7,48 @@ import { Resend } from "resend";
 export const dynamic = "force-dynamic";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-function getStripe(): Stripe {
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
-
-  if (!stripeKey) {
-    throw new Error("Payment provider is not configured.");
-  }
-
-  return new Stripe(stripeKey, {
-    apiVersion: "2024-04-10",
-  });
-}
-
 export async function POST(request: NextRequest) {
+  console.log("🚨 WEBHOOK HIT");
   console.log(
     "🚀 Stripe mode:",
     process.env.STRIPE_SECRET_KEY?.includes("test") ? "TEST" : "LIVE"
   );
-  console.log("🔔 Stripe webhook triggered");
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.error("❌ Missing STRIPE_SECRET_KEY");
-  }
+  console.log("🔐 Webhook secret exists:", !!process.env.STRIPE_WEBHOOK_SECRET);
 
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!webhookSecret) {
-    return NextResponse.json(
-      { error: "Webhook not configured" },
-      { status: 500 }
-    );
+
+  if (!stripeSecretKey || !webhookSecret) {
+    console.error("❌ Missing Stripe env vars in webhook");
+    return new Response("Missing Stripe config", { status: 500 });
   }
 
-  const rawBody = await request.text();
-  const signature = request.headers.get("stripe-signature");
-  if (!signature) {
-    return NextResponse.json(
-      { error: "Missing stripe-signature" },
-      { status: 400 }
-    );
+  const stripe = new Stripe(stripeSecretKey, {
+    apiVersion: "2024-04-10",
+  });
+
+  const body = await request.text();
+  const headerList = await headers();
+  const sig = headerList.get("stripe-signature");
+
+  console.log("📦 Webhook raw body length (bytes):", body.length);
+  console.log("🔑 stripe-signature header present:", !!sig);
+
+  if (!sig) {
+    console.error("❌ Missing stripe-signature header");
+    return new Response("Missing stripe-signature", { status: 400 });
   }
 
-  const stripe = getStripe();
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(
-      rawBody,
-      signature,
-      webhookSecret
-    );
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("Stripe webhook signature verification failed:", message);
-    return NextResponse.json({ error: message }, { status: 400 });
+    return new Response(message, { status: 400 });
   }
+
+  console.log("✅ Event type:", event.type);
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
@@ -67,7 +58,7 @@ export async function POST(request: NextRequest) {
     const product = session.metadata?.product;
 
     if (product !== "text-back") {
-      return NextResponse.json({ received: true });
+      return new Response("OK", { status: 200 });
     }
 
     const customerId = session.customer as string;
@@ -128,5 +119,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ received: true });
+  return new Response("OK", { status: 200 });
 }
