@@ -1,37 +1,35 @@
-CURRENT TASK:
+## TASK: Make Clearpath Systems fully dynamic (multi-client SaaS)
 
-You are implementing Supabase client integration for a Next.js app.
+Goal:
+Remove all hardcoding and make the system fully database-driven using Supabase.
 
-Scope is STRICTLY LIMITED to creating and testing database connection utilities.
+We need to:
 
-DO NOT modify:
-- /api/twilio/voice/route.ts
-- /api/twilio/status/route.ts
-- /api/twilio/inbound-sms/route.ts
-- any existing API logic
+1. Personalize SMS per client
+   - Use `client.auto_reply` instead of hardcoded message
 
-YOU MAY ONLY:
-1. Create:
-   - src/lib/supabase.ts
-   - src/lib/getClient.ts
+2. Send email to correct business
+   - Use `client.business_email`
 
-2. Add temporary test logic inside ONE existing route (voice route) ONLY for logging
+3. Route inbound SMS replies to business
+   - Use `client.forward_to_number`
 
-OBJECTIVE:
-- Connect app to Supabase
-- Create helper to fetch client by twilio_number
-- Verify connection by logging client data
+4. Remove ALL environment-based routing
+   - Remove `FORWARD_TO_NUMBER` usage completely
 
-REQUIREMENTS:
-- Use @supabase/supabase-js
-- Use environment variables:
-  NEXT_PUBLIC_SUPABASE_URL
-  NEXT_PUBLIC_SUPABASE_ANON_KEY
-- Handle errors safely
-- Do NOT break existing Twilio functionality
+5. Ensure all Twilio routes:
+   - Fetch client using `To` number
+   - Use Supabase as source of truth
 
-SUCCESS CRITERIA:
-- Supabase client initializes correctly
-- getClientByTwilioNumber returns correct data
-- Logs show client data when Twilio number is called
-- No crashes
+6. Maintain TwiML response format (NO JSON returns)
+
+Routes to update:
+- /api/twilio/voice
+- /api/twilio/status
+- /api/twilio/inbound-sms
+
+Important:
+- Do NOT break existing working Twilio flow
+- Preserve logging
+- Use optional chaining safely (client?.field)
+- Ensure system still works if client is null (fallbacks)

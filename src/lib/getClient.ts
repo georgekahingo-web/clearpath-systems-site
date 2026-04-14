@@ -10,10 +10,15 @@ export async function getClientByTwilioNumber(twilioNumber: string) {
     .from("clients")
     .select("*")
     .eq("twilio_number", twilioNumber)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("❌ Supabase error:", error.message);
+    return null;
+  }
+
+  if (!data) {
+    console.warn("⚠️ No client found for Twilio number:", twilioNumber);
     return null;
   }
 

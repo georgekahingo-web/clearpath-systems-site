@@ -89,7 +89,7 @@ export default function TextBackFeature() {
             <div className="space-y-3 rounded-2xl bg-white p-4">
               <div className="flex justify-end">
                 <div className="max-w-[85%] rounded-2xl bg-blue-600 px-4 py-3 text-sm text-white">
-                  Hey! Sorry we missed your call — how can we help?
+                  Your custom auto-reply (configured per business in the dashboard)
                 </div>
               </div>
               <div className="flex justify-start">

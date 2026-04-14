@@ -10,15 +10,21 @@ export async function POST(req: NextRequest) {
   const to = formData.get("To")?.toString();
   console.log("📞 Incoming To:", to);
 
+  let client = null;
 
   if (to) {
-    const client = await getClientByTwilioNumber(to);
-    console.log("🧪 TEST CLIENT:", client);
+    client = await getClientByTwilioNumber(to);
   }
+
+  console.log("🔍 CLIENT LOOKUP:", {
+    to,
+    client,
+  });
+  console.log("🧪 TEST CLIENT:", client);
 
   const twiml = new twilio.twiml.VoiceResponse();
 
-  const forwardTo = process.env.FORWARD_TO_NUMBER;
+  const forwardTo = client?.forward_to_number;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   console.log("📞 Voice webhook hit");
@@ -29,12 +35,19 @@ export async function POST(req: NextRequest) {
       {
         timeout: 20,
         answerOnBridge: true,
-        action: `${appUrl}/api/twilio/status`,
+        action: `${appUrl}/api/twilio/status?to=${encodeURIComponent(to || "")}`,
         method: "POST",
       },
       forwardTo
     );
   } else {
+    if (!client) {
+      console.warn("⚠️ Voice: no client for To number; forwarding skipped");
+    } else if (!forwardTo) {
+      console.warn("⚠️ Voice: client has no forward_to_number; forwarding skipped");
+    } else if (!appUrl) {
+      console.warn("⚠️ Voice: NEXT_PUBLIC_APP_URL missing; forwarding skipped");
+    }
     twiml.say("No forwarding number configured.");
   }
 
