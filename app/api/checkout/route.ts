@@ -10,6 +10,7 @@ type PlanKey = keyof typeof DEPOSIT_PRICE_IDS;
 
 export async function POST(request: NextRequest) {
   console.log("CHECKOUT: request started");
+  console.log("🚨 STRIPE KEY RAW:", process.env.STRIPE_SECRET_KEY);
   console.log(
     "🚀 Stripe mode:",
     process.env.STRIPE_SECRET_KEY?.includes("test") ? "TEST" : "LIVE"
