@@ -9,8 +9,6 @@ export async function POST(req: NextRequest) {
   const to = formData.get("To")?.toString();
   console.log("📞 Incoming To:", to);
 
-console.log("📞 Incoming To:", to); 
-
 
   if (to) {
     const client = await getClientByTwilioNumber(to);
