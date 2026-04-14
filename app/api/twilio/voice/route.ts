@@ -7,6 +7,10 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const to = formData.get("To")?.toString();
+  console.log("📞 Incoming To:", to);
+
+console.log("📞 Incoming To:", to); 
+
 
   if (to) {
     const client = await getClientByTwilioNumber(to);
