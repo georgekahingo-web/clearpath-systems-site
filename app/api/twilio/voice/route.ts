@@ -5,6 +5,7 @@ import { getClientByTwilioNumber } from "@/lib/getClient";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  console.log("🚨 VOICE ROUTE HIT");
   const formData = await req.formData();
   const to = formData.get("To")?.toString();
   console.log("📞 Incoming To:", to);
