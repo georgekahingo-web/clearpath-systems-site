@@ -61,7 +61,7 @@ function SuccessPageContent() {
     : ONBOARDING_CARD_COPY.website;
 
   const onboardingHref = isTextBackFlow
-    ? "/onboarding?flow=textback"
+    ? "/onboard"
     : "/onboarding";
 
   return (

@@ -1,35 +1,26 @@
-## TASK: Make Clearpath Systems fully dynamic (multi-client SaaS)
+Before making any changes:
 
-Goal:
-Remove all hardcoding and make the system fully database-driven using Supabase.
+1. Read CURRENT_TASK.md
+2. Do NOT break existing Stripe flow
+3. Do NOT break onboarding
+4. Keep Resend email logic intact
 
-We need to:
+---
 
-1. Personalize SMS per client
-   - Use `client.auto_reply` instead of hardcoded message
+TASK: Add email notifications for Text Back purchases using Stripe webhook
 
-2. Send email to correct business
-   - Use `client.business_email`
+GOAL:
 
-3. Route inbound SMS replies to business
-   - Use `client.forward_to_number`
+When a customer purchases the TEXT BACK service:
 
-4. Remove ALL environment-based routing
-   - Remove `FORWARD_TO_NUMBER` usage completely
+1. Send INTERNAL email (to admin)
+2. Send CUSTOMER confirmation email
 
-5. Ensure all Twilio routes:
-   - Fetch client using `To` number
-   - Use Supabase as source of truth
+---
 
-6. Maintain TwiML response format (NO JSON returns)
+SUCCESS CRITERIA:
 
-Routes to update:
-- /api/twilio/voice
-- /api/twilio/status
-- /api/twilio/inbound-sms
-
-Important:
-- Do NOT break existing working Twilio flow
-- Preserve logging
-- Use optional chaining safely (client?.field)
-- Ensure system still works if client is null (fallbacks)
+- Emails send ONLY for text-back purchases
+- Includes customer details
+- Uses Resend
+- Does NOT affect website package flow

@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    console.log("✅ Redirecting Text Back customer to onboarding");
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: [
@@ -41,7 +42,10 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/success?product=textback`,
+      metadata: {
+        product: "text-back",
+      },
+      success_url: `${origin}/onboard`,
       cancel_url: `${origin}/#text-back`,
     });
 

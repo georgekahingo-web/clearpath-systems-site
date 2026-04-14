@@ -29,6 +29,10 @@ export async function POST(req: NextRequest) {
     client = await getClientByTwilioNumber(to);
   }
 
+  if (!client) {
+    console.warn("⚠️ No client found for inbound SMS:", to);
+  }
+
   console.log("🔍 CLIENT LOOKUP:", {
     to,
     client,
@@ -41,10 +45,8 @@ export async function POST(req: NextRequest) {
 
   if (!to) {
     console.warn("⚠️ Inbound SMS: missing To; forward skipped");
-  } else if (!client) {
-    console.warn("⚠️ Inbound SMS: no client for To; forward skipped");
-  } else if (!forwardTo) {
-    console.warn("⚠️ Inbound SMS: client has no forward_to_number; forward skipped");
+  } else if (!client?.forward_to_number) {
+    console.warn("⚠️ Missing forward_to_number, cannot forward SMS");
   }
 
   const accountSid = process.env.TWILIO_ACCOUNT_SID;

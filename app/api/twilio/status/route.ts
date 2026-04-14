@@ -17,6 +17,10 @@ export async function POST(req: NextRequest) {
     client = await getClientByTwilioNumber(to);
   }
 
+  if (!client) {
+    console.warn("⚠️ No client found in status route:", to);
+  }
+
   console.log("📞 Incoming To:", to);
   console.log("🔍 CLIENT LOOKUP:", {
     to,
@@ -52,13 +56,14 @@ export async function POST(req: NextRequest) {
 
       if (!accountSid || !authToken || !twilioFrom || !from) {
         console.error("❌ SMS error: missing Twilio env or From");
-      } else if (!client?.auto_reply) {
-        console.warn("⚠️ Status: missing client auto_reply; SMS skipped");
       } else {
+        if (!client?.auto_reply) {
+          console.warn("⚠️ Status: missing client auto_reply; using fallback SMS");
+        }
         const twilioSdk = twilio(accountSid, authToken);
 
         await twilioSdk.messages.create({
-          body: client?.auto_reply,
+          body: client?.auto_reply || "Hey! Sorry we missed your call — how can we help?",
           from: twilioFrom,
           to: from,
         });
@@ -84,6 +89,7 @@ export async function POST(req: NextRequest) {
 
         console.log("📧 Missed call email sent");
       } else if (!client?.business_email) {
+        console.warn("⚠️ Missing business_email, skipping email");
         console.warn("⚠️ Status: missing client business_email; email skipped");
       }
     } catch (err) {
