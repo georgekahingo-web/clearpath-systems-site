@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
+  console.log(
+    "🚀 Stripe mode:",
+    process.env.STRIPE_SECRET_KEY?.includes("test") ? "TEST" : "LIVE"
+  );
+  console.log("📦 Creating Stripe checkout session");
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("❌ STRIPE_SECRET_KEY is missing");
+  }
+
   const stripeKey =
     process.env.NODE_ENV === "production"
       ? process.env.STRIPE_SECRET_KEY_LIVE

@@ -22,6 +22,15 @@ function getStripe(): Stripe {
 }
 
 export async function POST(request: NextRequest) {
+  console.log(
+    "🚀 Stripe mode:",
+    process.env.STRIPE_SECRET_KEY?.includes("test") ? "TEST" : "LIVE"
+  );
+  console.log("🔔 Stripe webhook triggered");
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("❌ STRIPE_SECRET_KEY is missing");
+  }
+
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
     return NextResponse.json(
