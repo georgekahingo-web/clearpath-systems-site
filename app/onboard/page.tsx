@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type FormDataState = {
   business_name: string;
@@ -17,6 +18,8 @@ const initialFormData: FormDataState = {
 };
 
 export default function OnboardPage() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
   const [formData, setFormData] = useState<FormDataState>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -28,13 +31,37 @@ export default function OnboardPage() {
     setSuccessMessage("");
     setErrorMessage("");
 
+    const name = formData.business_name;
+    const businessName = formData.business_name;
+    const email = formData.business_email;
+    const phone = formData.forward_to_number;
+    const businessType = "TextBack";
+    const services = "TextBack missed-call automation";
+    const location = "N/A";
+    const hasLogo = "N/A";
+    const hasDomain = "N/A";
+    const notes = formData.auto_reply;
+
     try {
       const res = await fetch("/api/onboard", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          name,
+          businessName,
+          email,
+          phone,
+          businessType,
+          services,
+          location,
+          hasLogo,
+          hasDomain,
+          notes,
+          stripeSessionId: sessionId,
+        }),
       });
 
       const data = (await res.json()) as { success?: boolean; error?: string };

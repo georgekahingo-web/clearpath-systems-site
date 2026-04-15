@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
         businessEmail,
         autoReplyMessage,
       },
-      success_url: `${origin}/onboard`,
+      success_url: `${origin}/onboard?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/#text-back`,
     });
 

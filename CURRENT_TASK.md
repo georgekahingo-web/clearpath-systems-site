@@ -1,12 +1,18 @@
-Fix TextBack checkout so it sends JSON body to /api/stripe/textback.
+Enhance onboarding flow to merge Stripe metadata (TextBack form data) with onboarding form data into a single unified admin email.
 
-Currently the route is being triggered without a request body, causing metadata to be empty.
+Current system:
+- /api/stripe/textback creates Stripe session with metadata ✅
+- Webhook sends basic email ✅
+- /api/onboarding sends onboarding email ✅
 
-GOAL:
-Ensure the TextBack form sends a POST request with JSON containing:
-- businessName
-- forwardPhoneNumber
-- businessEmail
-- autoReplyMessage
+Goal:
+- Pass Stripe session ID to onboarding page
+- Retrieve metadata from Stripe inside onboarding API
+- Merge metadata + onboarding form data
+- Send ONE combined admin email with full client details
 
-Then redirect user to Stripe checkout using the returned session URL.
+Constraints:
+- DO NOT break existing Stripe flow
+- DO NOT break existing onboarding submission
+- DO NOT remove current fields
+- Only extend functionality safely

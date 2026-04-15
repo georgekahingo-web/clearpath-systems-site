@@ -1,7 +1,13 @@
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-04-10",
+    })
+  : null;
 
 const MAKE_WEBHOOK_URL =
   "https://hook.us2.make.com/qkklon2lbvo69h65801ncn8g2l819qkk";
@@ -51,6 +57,8 @@ export async function POST(request: NextRequest) {
   }
 
   const b = body as Record<string, unknown>;
+  const stripeSessionId =
+    typeof b.stripeSessionId === "string" ? b.stripeSessionId : null;
 
   const name = typeof b.name === "string" ? b.name.trim() : "";
   const businessName =
@@ -85,6 +93,30 @@ export async function POST(request: NextRequest) {
   }
 
   console.log("ONBOARDING API: validation OK, sending to Make webhook…");
+
+  let textbackData = {
+    businessName: "N/A",
+    forwardPhoneNumber: "N/A",
+    businessEmail: "N/A",
+    autoReplyMessage: "N/A",
+  };
+
+  if (stripeSessionId && stripe) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(stripeSessionId);
+
+      textbackData = {
+        businessName: session.metadata?.businessName || "N/A",
+        forwardPhoneNumber: session.metadata?.forwardPhoneNumber || "N/A",
+        businessEmail: session.metadata?.businessEmail || "N/A",
+        autoReplyMessage: session.metadata?.autoReplyMessage || "N/A",
+      };
+
+      console.log("✅ Retrieved Stripe metadata:", textbackData);
+    } catch (err) {
+      console.error("❌ Failed to retrieve Stripe session:", err);
+    }
+  }
 
   try {
     const webhookRes = await fetch(MAKE_WEBHOOK_URL, {
@@ -128,6 +160,12 @@ export async function POST(request: NextRequest) {
     hasDomain: escapeHtml(hasDomain),
     notes: escapeHtml(notes),
   };
+  const safeTextback = {
+    businessName: escapeHtml(textbackData.businessName),
+    forwardPhoneNumber: escapeHtml(textbackData.forwardPhoneNumber),
+    businessEmail: escapeHtml(textbackData.businessEmail),
+    autoReplyMessage: escapeHtml(textbackData.autoReplyMessage),
+  };
 
   if (!process.env.RESEND_API_KEY) {
     console.warn(
@@ -153,6 +191,11 @@ export async function POST(request: NextRequest) {
     <p><strong>Has Logo:</strong> ${safe.hasLogo}</p>
     <p><strong>Has Domain:</strong> ${safe.hasDomain}</p>
     <p><strong>Notes:</strong> ${safe.notes || "—"}</p>
+    <h3>TextBack Setup</h3>
+    <p><strong>Business Name:</strong> ${safeTextback.businessName}</p>
+    <p><strong>Forward Phone:</strong> ${safeTextback.forwardPhoneNumber}</p>
+    <p><strong>Business Email:</strong> ${safeTextback.businessEmail}</p>
+    <p><strong>Auto Reply:</strong> ${safeTextback.autoReplyMessage}</p>
   `,
     });
 

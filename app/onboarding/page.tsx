@@ -44,6 +44,7 @@ export default function OnboardingPage() {
 function OnboardingPageContent() {
   const searchParams = useSearchParams();
   const flow = searchParams.get("flow");
+  const sessionId = searchParams.get("session_id");
   const isTextBackFlow = flow === FLOW_TEXTBACK;
 
   const headline = isTextBackFlow
@@ -144,6 +145,7 @@ function OnboardingPageContent() {
       hasLogo,
       hasDomain,
       notes: additionalNotes,
+      stripeSessionId: sessionId,
     };
 
     console.log("Submitting onboarding form:", payload);
