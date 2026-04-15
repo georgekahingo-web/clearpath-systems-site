@@ -1,103 +1,76 @@
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
-import { Resend } from "resend";
-import { getClientByTwilioNumber } from "@/lib/getClient";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { getClientForDialCallback } from "@/lib/getClient";
+import { notifyMissedCall } from "@/lib/missedCallNotifications";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const url = new URL(req.url);
-  const to = url.searchParams.get("to");
-
-  let client = null;
-
-  if (to) {
-    client = await getClientByTwilioNumber(to);
-  }
-
-  if (!client) {
-    console.warn("⚠️ No client found in status route:", to);
-  }
-
-  console.log("📞 Incoming To:", to);
-  console.log("🔍 CLIENT LOOKUP:", {
-    to,
-    client,
-  });
-
-  if (!client && to) {
-    console.warn("⚠️ Status: no client found for To:", to);
-  } else if (!to) {
-    console.warn("⚠️ Status: missing ?to= query param; using fallbacks where applicable");
-  }
+  const twilioInboundFromQuery = url.searchParams.get("to");
 
   const formData = await req.formData();
 
-  const dialCallStatus = formData.get("DialCallStatus")?.toString();
+  const dialStatus = formData.get("DialCallStatus")?.toString();
   const from = formData.get("From")?.toString();
+  const to = formData.get("To")?.toString();
 
-  console.log("📞 Status webhook hit");
-  console.log("📞 DialCallStatus:", dialCallStatus);
-  console.log("📞 From:", from);
+  console.log("📞 Status webhook (Dial callback)");
+  console.log("📞 DialCallStatus:", dialStatus);
+  console.log("📞 Caller (From):", from);
+  console.log("📞 Dialed party (To):", to);
+  console.log("📞 Twilio inbound hint (?to=):", twilioInboundFromQuery);
 
-  // Only send SMS if call was NOT answered
-  if (dialCallStatus && dialCallStatus !== "completed") {
-    const caller = formData.get("From")?.toString();
-    const forwardTo = client?.forward_to_number;
-    console.log("📞 Forwarding to:", forwardTo);
+  const client = await getClientForDialCallback({
+    twilioInboundNumber: twilioInboundFromQuery,
+    dialedNumber: to,
+  });
 
-    try {
-      const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      const authToken = process.env.TWILIO_AUTH_TOKEN;
-      const twilioFrom =
-        client?.twilio_number ?? process.env.TWILIO_PHONE_NUMBER;
+  console.log("🔍 CLIENT LOOKUP:", {
+    twilioInboundFromQuery,
+    dialedTo: to,
+    clientFound: !!client,
+  });
 
-      if (!accountSid || !authToken || !twilioFrom || !from) {
-        console.error("❌ SMS error: missing Twilio env or From");
-      } else {
-        if (!client?.auto_reply) {
-          console.warn("⚠️ Status: missing client auto_reply; using fallback SMS");
-        }
-        const twilioSdk = twilio(accountSid, authToken);
-
-        await twilioSdk.messages.create({
-          body: client?.auto_reply || "Hey! Sorry we missed your call — how can we help?",
-          from: twilioFrom,
-          to: from,
-        });
-
-        console.log("✅ Missed call text sent");
-      }
-    } catch (err) {
-      console.error("❌ SMS error:", err);
-    }
-
-    try {
-      if (client?.business_email && caller) {
-        await resend.emails.send({
-          from: "onboarding@resend.dev",
-          to: client.business_email,
-          subject: "Missed Call Alert",
-          html: `
-        <h2>Missed Call</h2>
-        <p>You missed a call from:</p>
-        <p><strong>${caller}</strong></p>
-      `,
-        });
-
-        console.log("📧 Missed call email sent");
-      } else if (!client?.business_email) {
-        console.warn("⚠️ Missing business_email, skipping email");
-        console.warn("⚠️ Status: missing client business_email; email skipped");
-      }
-    } catch (err) {
-      console.error("❌ Email error:", err);
-    }
+  if (!client) {
+    console.warn(
+      "⚠️ Status: no client resolved (try ?to= Twilio number or Dial To = forward_to_number)"
+    );
   }
 
   const twiml = new twilio.twiml.VoiceResponse();
+
+  const missedStatuses = ["no-answer", "busy", "failed", "canceled"];
+
+if (!dialStatus || !missedStatuses.includes(dialStatus)) {
+  console.log("✅ Dial outcome: no missed-call workflow", {
+    DialCallStatus: dialStatus,
+  });
+
+  return new NextResponse(twiml.toString(), {
+    headers: {
+      "Content-Type": "text/xml",
+    },
+  });
+}
+
+  if (!from) {
+    console.warn("⚠️ Status: missing From; cannot run missed-call workflow");
+    return new NextResponse(twiml.toString(), {
+      headers: {
+        "Content-Type": "text/xml",
+      },
+    });
+  }
+
+  const { smsSent, emailSent } = await notifyMissedCall(client, from);
+
+  console.log("📊 Missed-call workflow result:", {
+    DialCallStatus: dialStatus,
+    caller: from,
+    smsTriggered: smsSent,
+    emailTriggered: emailSent,
+  });
 
   return new NextResponse(twiml.toString(), {
     headers: {

@@ -43,11 +43,16 @@ export async function POST(req: NextRequest) {
   }
 
   if (forwardTo && appUrl) {
+    // Twilio requires an absolute URL; `?to=` is the inbound Twilio number for Supabase lookup on Dial callback.
+    const statusAction = new URL("/api/twilio/status", appUrl.replace(/\/$/, "") + "/");
+    if (to) {
+      statusAction.searchParams.set("to", to);
+    }
     twiml.dial(
       {
         timeout: 20,
         answerOnBridge: true,
-        action: `${appUrl}/api/twilio/status?to=${encodeURIComponent(to || "")}`,
+        action: statusAction.toString(),
         method: "POST",
       },
       forwardTo
