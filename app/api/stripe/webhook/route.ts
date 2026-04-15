@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
 
     // 🔒 SAFE EMAIL (NO CRASH)
     try {
+      console.log("📩 Sending admin email...");
       await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -58,8 +59,8 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Clearpath <onboarding@yourdomain.com>",
-          to: ["your@email.com"],
+          from: "Clearpath <onboarding@resend.dev>",
+          to: ["george.kahingo@outlook.com"],
           subject: "🚀 New Client",
           html: `<p>New signup: ${email}</p>`,
         }),
@@ -67,7 +68,33 @@ export async function POST(req: NextRequest) {
 
       console.log("✅ Admin email sent");
     } catch (err) {
-      console.error("❌ Email failed:", err);
+      console.error("❌ Admin email failed:", err);
+    }
+
+    if (!email) {
+      console.log("⚠️ No client email found, skipping client email send");
+    } else {
+      console.log(`📩 Sending client email to: ${email}`);
+
+      try {
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Clearpath <onboarding@resend.dev>",
+            to: [email],
+            subject: "Payment Confirmation - Clearpath Systems",
+            html: "<p>Thank you for your purchase. We will contact you shortly.</p>",
+          }),
+        });
+
+        console.log("✅ Client email sent");
+      } catch (err) {
+        console.error("❌ Client email failed:", err);
+      }
     }
   }
 

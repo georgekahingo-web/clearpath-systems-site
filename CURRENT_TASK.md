@@ -1,25 +1,20 @@
-# CURRENT TASK — HARD ISOLATE STRIPE WEBHOOK (FINAL FIX)
+OBJECTIVE:
+Fix email delivery in Stripe webhook so both admin and client receive emails after payment.
 
-## Problem
-Webhook still throwing:
-"Payment provider is not configured"
+WHAT NEEDS TO HAPPEN:
+1. Replace invalid sender email
+2. Send email to admin (you)
+3. Send email to client (from Stripe session)
+4. Add clear logs for debugging
+5. Keep everything inside webhook route
 
-## Root Cause
-Webhook is importing shared Stripe logic that throws errors
+REQUIREMENTS:
+- Use Resend API (already in code)
+- Do NOT modify Stripe logic
+- Do NOT restructure file
+- Only update email logic section
 
-## Objective
-Make webhook completely standalone and eliminate ALL external dependencies
-
-## Requirements
-
-1. Webhook must NOT import ANY Stripe helper
-2. Webhook must NOT import ANY payment utility
-3. Stripe must be instantiated DIRECTLY in file
-4. NO throw statements allowed
-5. Only safe return responses
-
-## Success Criteria
-
-- Webhook returns 200
-- No more "Payment provider is not configured"
-- Stripe event replay succeeds
+EXPECTED RESULT:
+- Admin receives "New Client" email
+- Client receives "Payment Confirmation" email
+- Logs confirm both emails were sent
