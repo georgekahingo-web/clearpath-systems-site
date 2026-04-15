@@ -16,7 +16,12 @@ export async function POST(req: NextRequest) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
 
   if (!stripeKey) {
-    throw new Error("Payment provider is not configured.");
+    console.error("❌ STRIPE NOT CONFIGURED");
+  
+    return NextResponse.json(
+      { error: "Stripe not configured" },
+      { status: 500 }
+    );
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
