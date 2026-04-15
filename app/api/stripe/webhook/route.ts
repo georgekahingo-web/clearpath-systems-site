@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Clearpath <onboarding@resend.dev>",
+          from: "Clearpath <onboarding@clearpathsystems.dev>",
           to: ["george.kahingo@outlook.com"],
           subject: "🚀 New Client",
           html: `<p>New signup: ${email}</p>`,
@@ -84,8 +84,8 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "Clearpath <onboarding@resend.dev>",
-            to: [email],
+            from: "Clearpath <onboarding@clearpathsystems.dev>",
+            to: ["george.kahingo@outlook.com"],
             subject: "Payment Confirmation - Clearpath Systems",
             html: "<p>Thank you for your purchase. We will contact you shortly.</p>",
           }),
