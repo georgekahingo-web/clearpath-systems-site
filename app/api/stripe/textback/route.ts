@@ -42,12 +42,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const {
-    businessName,
-    forwardPhoneNumber,
-    businessEmail,
-    autoReplyMessage,
-  } = await req.json();
+  let businessName = "";
+  let forwardPhoneNumber = "";
+  let businessEmail = "";
+  let autoReplyMessage = "";
+
+  try {
+    const body = await req.json();
+
+    businessName = body.businessName || "";
+    forwardPhoneNumber = body.forwardPhoneNumber || "";
+    businessEmail = body.businessEmail || "";
+    autoReplyMessage = body.autoReplyMessage || "";
+  } catch (err) {
+    console.warn("⚠️ No JSON body received");
+  }
 
   try {
     console.log("✅ Redirecting Text Back customer to onboarding");
