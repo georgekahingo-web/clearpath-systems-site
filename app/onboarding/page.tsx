@@ -74,6 +74,57 @@ function OnboardingPageContent() {
     setSubmitError(null);
     setSubmitting(true);
 
+    if (isTextBackFlow) {
+      const trimmedBusinessName = businessName.trim();
+      const trimmedForwardPhoneNumber = phone.trim();
+      const trimmedBusinessEmail = email.trim();
+      const trimmedAutoReplyMessage = additionalNotes.trim();
+
+      if (
+        !trimmedBusinessName ||
+        !trimmedForwardPhoneNumber ||
+        !trimmedBusinessEmail ||
+        !trimmedAutoReplyMessage
+      ) {
+        setSubmitError("Please complete all TextBack onboarding fields.");
+        setSubmitting(false);
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/stripe/textback", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            businessName: trimmedBusinessName,
+            forwardPhoneNumber: trimmedForwardPhoneNumber,
+            businessEmail: trimmedBusinessEmail,
+            autoReplyMessage: trimmedAutoReplyMessage,
+          }),
+        });
+
+        const data = (await res.json()) as { url?: string; error?: string };
+
+        if (!res.ok || !data.url) {
+          throw new Error(data.error || "Checkout failed");
+        }
+
+        window.location.href = data.url;
+        return;
+      } catch (error) {
+        console.error("TextBack checkout error:", error);
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to start checkout. Please try again.";
+        setSubmitError(message);
+        setSubmitting(false);
+        return;
+      }
+    }
+
     const payload = {
       name: fullName,
       businessName,
