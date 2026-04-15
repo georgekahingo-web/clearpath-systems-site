@@ -7,19 +7,23 @@ import { Resend } from "resend";
 export const dynamic = "force-dynamic";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   console.log("🚨 WEBHOOK HIT");
   console.log(
     "🚀 Stripe mode:",
     process.env.STRIPE_SECRET_KEY?.includes("test") ? "TEST" : "LIVE"
   );
-  console.log("🔐 Webhook secret exists:", !!process.env.STRIPE_WEBHOOK_SECRET);
+  console.log("🔑 STRIPE_SECRET_KEY exists:", !!process.env.STRIPE_SECRET_KEY);
+  console.log(
+    "🔐 STRIPE_WEBHOOK_SECRET exists:",
+    !!process.env.STRIPE_WEBHOOK_SECRET
+  );
 
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!stripeSecretKey || !webhookSecret) {
-    console.error("❌ Missing Stripe env vars in webhook");
+    console.error("❌ Missing Stripe environment variables in webhook");
     return new Response("Missing Stripe config", { status: 500 });
   }
 
@@ -27,12 +31,8 @@ export async function POST(request: NextRequest) {
     apiVersion: "2024-04-10",
   });
 
-  const body = await request.text();
-  const headerList = await headers();
-  const sig = headerList.get("stripe-signature");
-
-  console.log("📦 Webhook raw body length (bytes):", body.length);
-  console.log("🔑 stripe-signature header present:", !!sig);
+  const body = await req.text();
+  const sig = (await headers()).get("stripe-signature");
 
   if (!sig) {
     console.error("❌ Missing stripe-signature header");
@@ -42,15 +42,17 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-  } catch (err) {
+  } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Stripe webhook signature verification failed:", message);
-    return new Response(message, { status: 400 });
+    console.error("❌ Stripe signature verification failed:", message);
+    return new Response("Webhook Error", { status: 400 });
   }
 
   console.log("✅ Event type:", event.type);
 
   if (event.type === "checkout.session.completed") {
+    console.log("💰 Checkout session completed");
+
     const session = event.data.object as Stripe.Checkout.Session;
     const customerEmail = session.customer_details?.email;
     const businessName = session.metadata?.business_name || "New Client";
