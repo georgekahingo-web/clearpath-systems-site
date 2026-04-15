@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type FormDataState = {
   business_name: string;
@@ -16,11 +17,9 @@ const initialFormData: FormDataState = {
   auto_reply: "",
 };
 
-type OnboardFormProps = {
-  sessionId: string | null;
-};
-
-export default function OnboardForm({ sessionId }: OnboardFormProps) {
+export default function OnboardForm() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
   const [formData, setFormData] = useState<FormDataState>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
