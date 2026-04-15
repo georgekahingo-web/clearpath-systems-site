@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
 
     const email = session.customer_details?.email;
+    const metadata = session.metadata;
 
     console.log("💰 Payment success for:", email);
 
@@ -64,8 +65,14 @@ export async function POST(req: NextRequest) {
           to: ["george.clearpath@gmail.com"],
           subject: "🚀 New Client",
           html: `
-  <h2>🚀 New Client Signup</h2>
-  <p><strong>Email:</strong> ${email}</p>
+  <h2>🚀 New TextBack Client</h2>
+  <p><strong>Customer Email:</strong> ${email}</p>
+  <hr/>
+  <p><strong>Business Name:</strong> ${metadata?.businessName || "N/A"}</p>
+  <p><strong>Forward Phone:</strong> ${metadata?.forwardPhoneNumber || "N/A"}</p>
+  <p><strong>Business Email:</strong> ${metadata?.businessEmail || "N/A"}</p>
+  <p><strong>Auto Reply Message:</strong></p>
+  <p>${metadata?.autoReplyMessage || "N/A"}</p>
 `,
         }),
       });

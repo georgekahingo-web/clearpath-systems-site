@@ -42,6 +42,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const {
+    businessName,
+    forwardPhoneNumber,
+    businessEmail,
+    autoReplyMessage,
+  } = await req.json();
+
   try {
     console.log("✅ Redirecting Text Back customer to onboarding");
     const session = await stripe.checkout.sessions.create({
@@ -53,7 +60,10 @@ export async function POST(req: NextRequest) {
         },
       ],
       metadata: {
-        product: "text-back",
+        businessName,
+        forwardPhoneNumber,
+        businessEmail,
+        autoReplyMessage,
       },
       success_url: `${origin}/onboard`,
       cancel_url: `${origin}/#text-back`,
