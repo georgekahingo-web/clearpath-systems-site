@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { NextRequest } from "next/server";
 import Stripe from "stripe";
 
@@ -13,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   if (!stripeSecretKey || !webhookSecret) {
     console.error("❌ Missing Stripe env variables");
-    return new Response("Missing config", { status: 200 });
+    return new Response("Missing config", { status: 400 });
   }
 
   const stripe = new Stripe(stripeSecretKey, {
@@ -25,7 +27,7 @@ export async function POST(req: NextRequest) {
 
   if (!sig) {
     console.error("❌ Missing Stripe signature");
-    return new Response("No signature", { status: 200 });
+    return new Response("No signature", { status: 400 });
   }
 
   let event: Stripe.Event;
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err: any) {
     console.error("❌ Webhook signature verification failed:", err.message);
-    return new Response("Webhook Error", { status: 200 });
+    return new Response("Webhook Error", { status: 400 });
   }
 
   console.log("✅ Event type:", event.type);
