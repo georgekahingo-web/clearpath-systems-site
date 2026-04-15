@@ -1,6 +1,8 @@
-Fix Next.js prerender error on /onboard page caused by useSearchParams.
+Fix prerender error on /onboard by moving useSearchParams into a client component.
 
-The page is currently being statically generated, but it depends on runtime URL params (session_id).
+The current page incorrectly uses useSearchParams in a server component, which breaks the build.
 
 GOAL:
-Mark /onboard page as dynamic so it runs only at request time and avoids prerender errors.
+- Keep /onboard/page.tsx as a server component
+- Create a client component to safely access search params
+- Pass session_id from client → form submission
