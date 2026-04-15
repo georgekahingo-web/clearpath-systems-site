@@ -93,7 +93,7 @@ function OnboardingPageContent() {
 
       try {
         const businessName = businessNameValue;
-        console.log("🚀 Sending form data:", {
+        console.log("🚀 Sending TextBack data:", {
           businessName,
           forwardPhoneNumber,
           businessEmail,

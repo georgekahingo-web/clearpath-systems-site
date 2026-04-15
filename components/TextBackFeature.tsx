@@ -1,25 +1,8 @@
 "use client";
 
 export default function TextBackFeature() {
-  const handleTextBackCheckout = async () => {
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      console.error("❌ Missing NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
-    }
-    try {
-      const res = await fetch("/api/stripe/textback", {
-        method: "POST",
-      });
-
-      const data = (await res.json()) as { url?: string; error?: string };
-
-      if (!res.ok || !data.url) {
-        throw new Error(data.error || "Checkout failed");
-      }
-
-      window.location.href = data.url;
-    } catch (err) {
-      console.error("Text-Back checkout error:", err);
-    }
+  const handleTextBackCheckout = () => {
+    window.location.href = "/onboarding?flow=textback";
   };
 
   return (
