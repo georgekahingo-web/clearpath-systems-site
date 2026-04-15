@@ -62,7 +62,10 @@ export async function POST(req: NextRequest) {
           from: "Clearpath <onboarding@clearpathsystems.dev>",
           to: ["george.kahingo@outlook.com"],
           subject: "🚀 New Client",
-          html: `<p>New signup: ${email}</p>`,
+          html: `
+  <h2>🚀 New Client Signup</h2>
+  <p><strong>Email:</strong> ${email}</p>
+`,
         }),
       });
 
@@ -72,7 +75,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!email) {
-      console.log("⚠️ No client email found, skipping client email send");
+      console.log("⚠️ No client email found — Stripe session missing customer email");
     } else {
       console.log(`📩 Sending client email to: ${email}`);
 
@@ -85,7 +88,7 @@ export async function POST(req: NextRequest) {
           },
           body: JSON.stringify({
             from: "Clearpath <onboarding@clearpathsystems.dev>",
-            to: ["george.kahingo@outlook.com"],
+            to: [email],
             subject: "Payment Confirmation - Clearpath Systems",
             html: "<p>Thank you for your purchase. We will contact you shortly.</p>",
           }),
