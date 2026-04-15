@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
     // 🔒 SAFE EMAIL (NO CRASH)
     try {
       console.log("📩 Sending admin email...");
+      console.log("📨 ADMIN EMAIL TARGET:", "george.clearpath@gmail.com");
       await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           from: "Clearpath <onboarding@clearpathsystems.dev>",
-          to: ["george.kahingo@outlook.com"],
+          to: ["george.clearpath@gmail.com"],
           subject: "🚀 New Client",
           html: `
   <h2>🚀 New Client Signup</h2>
