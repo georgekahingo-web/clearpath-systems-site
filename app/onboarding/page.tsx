@@ -75,16 +75,16 @@ function OnboardingPageContent() {
     setSubmitting(true);
 
     if (isTextBackFlow) {
-      const trimmedBusinessName = businessName.trim();
-      const trimmedForwardPhoneNumber = phone.trim();
-      const trimmedBusinessEmail = email.trim();
-      const trimmedAutoReplyMessage = additionalNotes.trim();
+      const businessNameValue = businessName.trim();
+      const forwardPhoneNumber = phone.trim();
+      const businessEmail = email.trim();
+      const autoReplyMessage = additionalNotes.trim();
 
       if (
-        !trimmedBusinessName ||
-        !trimmedForwardPhoneNumber ||
-        !trimmedBusinessEmail ||
-        !trimmedAutoReplyMessage
+        !businessNameValue ||
+        !forwardPhoneNumber ||
+        !businessEmail ||
+        !autoReplyMessage
       ) {
         setSubmitError("Please complete all TextBack onboarding fields.");
         setSubmitting(false);
@@ -92,20 +92,28 @@ function OnboardingPageContent() {
       }
 
       try {
+        const businessName = businessNameValue;
+        console.log("🚀 Sending form data:", {
+          businessName,
+          forwardPhoneNumber,
+          businessEmail,
+          autoReplyMessage,
+        });
+
         const res = await fetch("/api/stripe/textback", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            businessName: trimmedBusinessName,
-            forwardPhoneNumber: trimmedForwardPhoneNumber,
-            businessEmail: trimmedBusinessEmail,
-            autoReplyMessage: trimmedAutoReplyMessage,
+            businessName,
+            forwardPhoneNumber,
+            businessEmail,
+            autoReplyMessage,
           }),
         });
 
-        const data = (await res.json()) as { url?: string; error?: string };
+        const data = await res.json();
 
         if (!res.ok || !data.url) {
           throw new Error(data.error || "Checkout failed");
