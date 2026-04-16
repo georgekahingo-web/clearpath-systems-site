@@ -9,10 +9,6 @@ type ClientLike = {
   business_email?: string | null;
 } | null;
 
-/**
- * Single shared path for missed-call customer SMS + business email.
- * Preserves existing behavior from the Twilio status webhook.
- */
 export async function notifyMissedCall(
   client: ClientLike,
   callerPhone: string
@@ -25,16 +21,25 @@ export async function notifyMissedCall(
   const twilioFrom =
     client?.twilio_number ?? process.env.TWILIO_PHONE_NUMBER;
 
+  /**
+   * =========================
+   * 📩 SMS LOGIC
+   * =========================
+   */
   try {
     if (!accountSid || !authToken || !twilioFrom || !callerPhone) {
-      console.error("❌ Missed-call SMS skipped: missing Twilio env or caller From");
+      console.error(
+        "❌ Missed-call SMS skipped: missing Twilio config or caller"
+      );
     } else {
       if (!client?.auto_reply) {
         console.warn(
-          "⚠️ Missed-call: missing client auto_reply; using fallback SMS"
+          "⚠️ Missing client auto_reply; using fallback SMS message"
         );
       }
+
       const twilioSdk = twilio(accountSid, authToken);
+
       await twilioSdk.messages.create({
         body:
           client?.auto_reply ||
@@ -42,27 +47,47 @@ export async function notifyMissedCall(
         from: twilioFrom,
         to: callerPhone,
       });
+
+      console.log("📩 SMS sent to:", callerPhone);
       smsSent = true;
     }
   } catch (err) {
     console.error("❌ Missed-call SMS error:", err);
   }
 
+  /**
+   * =========================
+   * 📧 EMAIL LOGIC
+   * =========================
+   */
   try {
     if (client?.business_email && callerPhone) {
-      await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: client.business_email,
-        subject: "Missed Call Alert",
+      const cleanEmail = client.business_email.trim();
+
+      console.log("📧 Attempting email send to:", cleanEmail);
+
+      const response = await resend.emails.send({
+        // ✅ USE YOUR DOMAIN (since verified)
+        from: "Clearpath <alerts@clearpathsystems.dev>",
+
+        to: cleanEmail,
+
+        subject: `📞 Missed Call from ${callerPhone}`,
+
         html: `
-        <h2>Missed Call</h2>
-        <p>You missed a call from:</p>
-        <p><strong>${callerPhone}</strong></p>
-      `,
+          <h2>📞 Missed Call</h2>
+          <p>You missed a call from:</p>
+          <p><strong>${callerPhone}</strong></p>
+          <br/>
+          <p>Call them back ASAP to secure the job.</p>
+        `,
       });
+
+      console.log("📧 Resend response:", response);
+
       emailSent = true;
     } else if (!client?.business_email) {
-      console.warn("⚠️ Missed-call: missing business_email; email skipped");
+      console.warn("⚠️ Missing business_email; email skipped");
     }
   } catch (err) {
     console.error("❌ Missed-call email error:", err);
