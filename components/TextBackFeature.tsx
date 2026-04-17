@@ -13,12 +13,12 @@ export default function TextBackFeature() {
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         <div className="order-2 lg:order-1">
           <h2 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl md:leading-tight">
-            Never Miss a Lead Again
+          Every Missed Call Is a Lost Customer — We Fix That
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-slate-600">
-            When a customer calls and no one answers, an automatic text can go
-            out instantly — helping local businesses turn missed calls into real
-            conversations.
+          When you miss a call, that customer usually moves on to the next business.
+          Our Missed Call Recovery System instantly texts them back while also notifying you in real time
+          — so you can follow up, stay in control, and turn lost opportunities into booked jobs.
           </p>
           <ul className="mt-8 space-y-3 text-slate-700">
             <li className="flex items-center gap-3">
@@ -27,15 +27,15 @@ export default function TextBackFeature() {
             </li>
             <li className="flex items-center gap-3">
               <span className="h-2 w-2 rounded-full bg-blue-600" />
-              Turn missed calls into real conversations
+              Real-time email alerts so you never miss a lead
             </li>
             <li className="flex items-center gap-3">
               <span className="h-2 w-2 rounded-full bg-blue-600" />
-              Built specifically for local service businesses
+              Convert missed calls into paying customers
             </li>
             <li className="flex items-center gap-3">
               <span className="h-2 w-2 rounded-full bg-blue-600" />
-              Simple setup — no new tools to learn
+              Works with your existing phone system — no disruption
             </li>
           </ul>
           <p className="mt-8 text-sm font-semibold leading-relaxed text-blue-600">
@@ -44,7 +44,7 @@ export default function TextBackFeature() {
           </p>
           <div className="mt-10">
             <h3 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
-              Start capturing missed leads today
+            Start Recovering Missed Customers — Automatically
             </h3>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
               Use Text-Back on its own or get it included with a high-converting

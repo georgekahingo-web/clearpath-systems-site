@@ -1,71 +1,36 @@
 CURRENT TASK:
 
-Upgrade Twilio call handling to support call forwarding workflows WITHOUT breaking existing SaaS logic, SMS behavior, or missed-call email notifications.
+Refine UI interactions for navbar and CTA buttons WITHOUT changing any structure or breaking existing layout.
 
-CRITICAL CONTEXT:
-- This is a live SaaS app using Supabase
-- Businesses onboard via a form → data stored in Supabase
-- The field `forward_to_number` stores the destination phone number
-- Existing system:
-    - Sends SMS to customer when call is missed
-    - Sends email notification to business when call is missed
-- DO NOT break or modify:
-    - Supabase schema
-    - onboarding flow
-    - SMS logic
-    - email notification logic
+Context:
+- This is a Next.js + Tailwind project
+- Navbar links currently feel static (no hover interaction)
+- "Book a Consultation" button is larger than "Get Your Website" and needs to be visually consistent
 
-PROBLEM:
-- Current missed-call detection relies on timeout and fails when calls are forwarded into Twilio
+Goals:
 
-GOAL:
-- Detect missed calls using Twilio `DialCallStatus`
-- Trigger BOTH:
-    1. Customer SMS
-    2. Business email notification
-  ONLY when call is not completed
+1. Navbar Hover Effects:
+   - Add smooth hover interaction to all navbar links
+   - Include:
+     - subtle color transition (e.g. gray → darker or blue)
+     - optional underline or bottom border animation
+     - smooth transition (duration-200 or 300)
+   - Must NOT affect layout or spacing
 
-CHANGES REQUIRED:
+2. CTA Button Size Consistency:
+   - Make "Book a Consultation" visually similar in size to "Get Your Website"
+   - Adjust:
+     - padding (px / py)
+     - font size if needed
+   - Keep styling hierarchy (primary vs secondary) intact
 
-1. Update Twilio Voice route:
-   - Ensure `twiml.dial()` uses `forward_to_number`
-   - Add:
-     action: "/api/twilio/status"
-     method: "POST"
+Constraints:
+- DO NOT change component structure
+- DO NOT rename classes globally
+- DO NOT affect responsiveness
+- Only apply Tailwind utility class updates
 
-2. Create or update `/api/twilio/status/route.ts`:
-   - Parse Twilio POST request
-   - Extract:
-       - DialCallStatus
-       - From (customer number)
-       - To (Twilio number)
-
-3. Logic:
-
-   IF DialCallStatus !== "completed":
-     → trigger EXISTING missed-call workflow:
-         - send SMS to customer
-         - send email to business
-   ELSE:
-     → do nothing
-
-4. IMPORTANT:
-   - DO NOT duplicate SMS logic
-   - DO NOT duplicate email logic
-   - Reuse existing functions/services
-   - Ensure both SMS + email still fire together
-
-5. Add logging:
-   - DialCallStatus
-   - Caller number
-   - Whether SMS/email were triggered
-
-6. Ensure:
-   - Backward compatibility with current direct-call workflow
-   - No schema changes
-   - No breaking changes
-
-OUTCOME:
-- Forwarded calls are handled correctly
-- Missed calls trigger BOTH SMS + email reliably
-- Existing SaaS behavior remains fully intact
+Outcome:
+- Navbar feels interactive and premium
+- Buttons feel balanced and intentional
+- No layout shifts or broken UI

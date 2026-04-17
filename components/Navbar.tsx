@@ -16,10 +16,18 @@ export default function Navbar() {
   
           {/* NAV LINKS */}
           <nav className="hidden gap-8 text-sm text-gray-600 md:flex">
-            <a href="#services">Services</a>
-            <a href="#text-back">Text-Back</a>
-            <a href="#portfolio">Portfolio</a>
-            <a href="#pricing">Pricing</a>
+            <a href="#services" className="border-b-2 border-transparent pb-1 text-gray-600 transition-colors duration-200 hover:border-blue-600 hover:text-blue-600">
+              Services
+            </a>
+            <a href="#text-back" className="border-b-2 border-transparent pb-1 text-gray-600 transition-colors duration-200 hover:border-blue-600 hover:text-blue-600">
+              Recovery System
+            </a>
+            <a href="#portfolio" className="border-b-2 border-transparent pb-1 text-gray-600 transition-colors duration-200 hover:border-blue-600 hover:text-blue-600">
+              Portfolio
+            </a>
+            <a href="#pricing" className="border-b-2 border-transparent pb-1 text-gray-600 transition-colors duration-200 hover:border-blue-600 hover:text-blue-600">
+              Pricing
+            </a>
           </nav>
   
           {/* CTA BUTTON */}

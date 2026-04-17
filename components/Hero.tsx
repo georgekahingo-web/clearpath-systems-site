@@ -15,16 +15,15 @@ export default function Hero() {
       <div className="relative mx-auto grid max-w-7xl gap-14 lg:grid-cols-2 lg:items-center lg:gap-16">
         <div className="max-w-xl lg:max-w-none">
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-700">
-            A clear path from discovery to booking
+          A Clear Path to Every Customer — Even the Ones You Miss
           </p>
 
           <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl md:text-6xl lg:text-[3.5rem] lg:leading-[1.06]">
-            Websites that turn visitors into booked clients.
+          Turn Every Customer Interaction Into a Booking
           </h1>
 
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-600 md:text-xl">
-            Capture more leads with fast load times, conversion-focused layouts,
-            and clear CTAs—so traffic becomes calls and bookings, not bounces.
+          We build systems that capture, respond, and convert every lead — from website visit to missed call — so you don’t lose revenue.
           </p>
 
           <div className="mt-10 flex flex-col items-start gap-3">
@@ -32,7 +31,7 @@ export default function Hero() {
               href="https://calendly.com/george-clearpath/30min"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white/80 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-white"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white/80 px-5 py-3.5 text-sm font-semibold tracking-tight text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-white"
             >
               Book a Consultation
             </a>
