@@ -1,36 +1,119 @@
-CURRENT TASK:
+CURRENT TASK: OPEN GRAPH & SOCIAL LINK PREVIEW META TAGS
+Version: 1.0
+Scope: layout.tsx (or layout.js) ONLY
 
-Refine UI interactions for navbar and CTA buttons WITHOUT changing any structure or breaking existing layout.
+═══════════════════════════════════════════════════
+OBJECTIVE
+═══════════════════════════════════════════════════
+Add Open Graph and Twitter Card meta tags to the 
+root layout file so that when clearpathsystems.dev 
+is shared on iMessage, Facebook, Instagram, or any 
+other platform, it displays a proper branded link 
+preview instead of a generic or incorrect crop.
 
-Context:
-- This is a Next.js + Tailwind project
-- Navbar links currently feel static (no hover interaction)
-- "Book a Consultation" button is larger than "Get Your Website" and needs to be visually consistent
+This is a metadata-only change. Nothing visual, 
+structural, or functional is being touched.
 
-Goals:
+═══════════════════════════════════════════════════
+FILE TO MODIFY
+═══════════════════════════════════════════════════
+ONE file only: app/layout.tsx (or app/layout.js)
 
-1. Navbar Hover Effects:
-   - Add smooth hover interaction to all navbar links
-   - Include:
-     - subtle color transition (e.g. gray → darker or blue)
-     - optional underline or bottom border animation
-     - smooth transition (duration-200 or 300)
-   - Must NOT affect layout or spacing
+DO NOT open, read, or modify any other file.
 
-2. CTA Button Size Consistency:
-   - Make "Book a Consultation" visually similar in size to "Get Your Website"
-   - Adjust:
-     - padding (px / py)
-     - font size if needed
-   - Keep styling hierarchy (primary vs secondary) intact
+═══════════════════════════════════════════════════
+EXACT CHANGE REQUIRED
+═══════════════════════════════════════════════════
+Locate the existing metadata export in layout.tsx.
+It likely looks something like this:
 
-Constraints:
-- DO NOT change component structure
-- DO NOT rename classes globally
-- DO NOT affect responsiveness
-- Only apply Tailwind utility class updates
+export const metadata: Metadata = {
+  title: "...",
+  description: "...",
+}
 
-Outcome:
-- Navbar feels interactive and premium
-- Buttons feel balanced and intentional
-- No layout shifts or broken UI
+Add the following fields to that existing metadata 
+object — do NOT replace or remove anything already 
+there, only ADD to it:
+
+openGraph: {
+  title: "Clearpath Systems",
+  description: "Turn Every Customer Interaction Into 
+    a Booking — websites, missed call text-back, and 
+    ad management for local businesses.",
+  url: "https://clearpathsystems.dev",
+  siteName: "Clearpath Systems",
+  images: [
+    {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "Clearpath Systems — A Clear Path to Every 
+        Customer",
+    },
+  ],
+  type: "website",
+},
+twitter: {
+  card: "summary_large_image",
+  title: "Clearpath Systems",
+  description: "Turn Every Customer Interaction Into 
+    a Booking — websites, missed call text-back, and 
+    ad management for local businesses.",
+  images: ["/og-image.png"],
+},
+
+═══════════════════════════════════════════════════
+IMPORTANT — og-image.png
+═══════════════════════════════════════════════════
+Do NOT create, generate, or reference any image file 
+in code beyond the path "/og-image.png" already 
+specified above. I will manually add the actual 
+og-image.png file to the /public folder myself.
+
+═══════════════════════════════════════════════════
+CONSTRAINTS — READ BEFORE MAKING ANY CHANGE
+═══════════════════════════════════════════════════
+- Touch ONLY app/layout.tsx (or app/layout.js)
+- Do NOT modify any component files
+- Do NOT modify any page files including page.tsx
+- Do NOT change, remove, or rewrite any existing 
+  metadata fields already present in the file
+- Do NOT alter any imports unless strictly required 
+  to support the Metadata type
+- Do NOT change any layout structure, className, 
+  font, or any JSX in the file
+- Do NOT add any new dependencies or packages
+- Do NOT modify tailwind.config, next.config, or 
+  any other config file
+- Make the absolute smallest change possible that 
+  achieves only what is described above
+
+═══════════════════════════════════════════════════
+MANUAL STEP — TO BE DONE BY ME AFTER DEPLOY
+═══════════════════════════════════════════════════
+After Cursor makes the code change and I deploy 
+to Vercel, I will:
+
+1. Take a screenshot of my hero section
+2. Resize it to 1200×630px
+3. Save it as og-image.png
+4. Place it in the /public folder of the project
+5. Push to GitHub so Vercel picks it up
+6. Verify the preview at:
+   developers.facebook.com/tools/debug
+
+═══════════════════════════════════════════════════
+EXPECTED RESULT
+═══════════════════════════════════════════════════
+After this change and the manual og-image.png step:
+
+✓ Sharing clearpathsystems.dev on iMessage shows 
+  the hero section as the link preview image
+✓ Sharing on Facebook and Instagram shows the 
+  correct branded preview
+✓ The preview title reads "Clearpath Systems"
+✓ The preview description explains the service
+✓ No visual or functional change anywhere on 
+  the live site
+✓ All existing metadata fields remain intact
